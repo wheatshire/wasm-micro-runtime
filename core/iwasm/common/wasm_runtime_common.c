@@ -296,16 +296,14 @@ decode_insn(uint8 *insn)
     char buffer[256];
 
     if (ZYAN_SUCCESS(ZydisDecoderDecodeFull(
-            &decoder, data + offset, length - offset, &instruction, operands,
-            ZYDIS_MAX_OPERAND_COUNT_VISIBLE,
-            ZYDIS_DFLAG_VISIBLE_OPERANDS_ONLY))) {
+            &decoder, data + offset, length - offset, &instruction, operands))) {
 
         /* Format & print the binary instruction structure to
            human readable format */
         ZydisFormatterFormatInstruction(&formatter, &instruction, operands,
                                         instruction.operand_count_visible,
                                         buffer, sizeof(buffer),
-                                        runtime_address);
+                                        runtime_address, NULL);
 
 #if 0
         /* Print current instruction */
