@@ -3516,7 +3516,7 @@ call_wasm_with_hw_bound_check(WASMModuleInstance *module_inst,
     WASMJmpBuf jmpbuf_node = { 0 }, *jmpbuf_node_pop;
     WASMRuntimeFrame *prev_frame = wasm_exec_env_get_cur_frame(exec_env);
     uint8 *prev_top = exec_env->wasm_stack.top;
-#ifdef BH_PLATFORM_WINDOWS
+#if defined(BH_PLATFORM_WINDOWS) && !defined(__GNUC__)
     int result;
     bool has_exception;
     char exception[EXCEPTION_BUF_LEN];
@@ -3551,7 +3551,7 @@ call_wasm_with_hw_bound_check(WASMModuleInstance *module_inst,
     wasm_exec_env_push_jmpbuf(exec_env, &jmpbuf_node);
 
     if (os_setjmp(jmpbuf_node.jmpbuf) == 0) {
-#ifndef BH_PLATFORM_WINDOWS
+#if !defined(BH_PLATFORM_WINDOWS) || defined(BH_PLATFORM_WINDOWS) && defined(__GNUC__)
         wasm_interp_call_wasm(module_inst, exec_env, function, argc, argv);
 #else
         __try {
